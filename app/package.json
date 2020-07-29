@@ -1,0 +1,18 @@
+{
+  "name": "so-drage-ui",
+  "productName": "so-drage-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Yu",
+    "email": "312364705@qq.com",
+    "url": "https://github.com/YuArtian/so-drag-ui"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}

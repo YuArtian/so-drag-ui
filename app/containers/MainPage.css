@@ -1,0 +1,14 @@
+.main {
+  display: flex;
+  height: 100vh;
+}
+.left {
+  width: 200px;
+}
+.middle {
+  flex: 1;
+  background-color: #fff;
+}
+.right {
+  width: 200px;
+}
