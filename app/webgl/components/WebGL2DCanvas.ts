@@ -32,8 +32,9 @@ export default class WebGL2DCanvas {
     // 添加到画布
     this.appendComponentToLayer(component);
     // 添加到当前组件树
-    // this.tree
+    this.tree.appendElement(component);
     // 重新渲染
+    // console.log('this.stage', this.stage.toObject());
     this.render();
   }
 
@@ -43,5 +44,7 @@ export default class WebGL2DCanvas {
   }
 
   /* 转换为 JSON 对象 */
-  toJSON() {}
+  getComponentsTree() {
+    return this.tree;
+  }
 }

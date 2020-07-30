@@ -58,4 +58,28 @@ export default class Button extends WebGL2DComponent {
       id: this.id,
     });
   }
+
+  /* 获取组件样式 */
+  getStyle() {
+    console.log('this.group5', this.group.toObject());
+    const align = this.text.align();
+    const verticalAlign = this.text.verticalAlign();
+    const width = this.rect.width();
+    const height = this.rect.height();
+    const background = this.rect.fill();
+    const borderRadios = this.rect.cornerRadius();
+    const fontSize = this.text.fontSize();
+    const color = this.text.fill();
+
+    return `display: flex; align-items: ${align};\
+    justify-content:${verticalAlign};width: ${width};\
+    height: ${height};background: ${background};\
+    border-radios: ${borderRadios};font-size: ${fontSize};color: ${color}`;
+  }
+
+  /* dom */
+  toDOMString() {
+    const dom = `<div data-id="${this.getId()}" data-type="button" style="${this.getStyle()}">${this.text.text()}</div>`;
+    return dom;
+  }
 }

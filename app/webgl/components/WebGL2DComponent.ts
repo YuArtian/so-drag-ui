@@ -24,6 +24,8 @@ export default abstract class WebGL2DComponent {
 
   protected parent: WebGL2DComponent | null;
 
+  protected dom = '';
+
   protected constructor(props: WebGL2DComponentCtor) {
     const { id, name, type, position } = props;
     this.id = id || '';
@@ -61,6 +63,11 @@ export default abstract class WebGL2DComponent {
     return this.id;
   }
 
+  /* 获取组件类型 */
+  getType() {
+    return this.type;
+  }
+
   /* 获取组件 group */
   getGroup() {
     return this.group;
@@ -69,5 +76,9 @@ export default abstract class WebGL2DComponent {
   /* 获取组件 transformer */
   getTransformer() {
     return this.transformer;
+  }
+
+  toDOMString() {
+    return `<div data-id="${this.getId()}"></div>`;
   }
 }
