@@ -15,6 +15,7 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import httpServer from 'http-server'
 
 export default class AppUpdater {
   constructor() {
@@ -86,7 +87,11 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+
   });
+
+  console.log('httpServer', httpServer.createServer)
+  httpServer.createServer().listen('8080')
 
   mainWindow.on('closed', () => {
     mainWindow = null;
