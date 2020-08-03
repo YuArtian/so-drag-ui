@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 // import WebView from 'react-electron-web-view';
 import styles from './MainPage.css';
 import ComponentMenu from '../components/ComponentMenu/index';
 
 export default function MainPage() {
-  useEffect(() => {}, []);
 
   return (
     <div className={styles.main}>
