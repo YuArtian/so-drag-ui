@@ -15,7 +15,8 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import httpServer from 'http-server'
+
+const httpServer = require('http-server');
 
 export default class AppUpdater {
   constructor() {
@@ -49,6 +50,9 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+// 启动 node 服务
+httpServer.createServer({ root: '../pubilc/so-react-template' }).listen(8080);
+
 const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -67,9 +71,11 @@ const createWindow = async () => {
       process.env.ERB_SECURE !== 'true'
         ? {
             nodeIntegration: true,
+            webviewTag: true,
           }
         : {
             preload: path.join(__dirname, 'dist/renderer.prod.js'),
+            webviewTag: true,
           },
   });
 
@@ -87,11 +93,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-
   });
-
-  console.log('httpServer', httpServer.createServer)
-  httpServer.createServer().listen('8080')
 
   mainWindow.on('closed', () => {
     mainWindow = null;

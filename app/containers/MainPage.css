@@ -2,8 +2,12 @@
   display: flex;
   height: 100vh;
 }
-.left {
+.components {
   width: 200px;
+}
+.list {
+  width: 200px;
+  background-color: #fff;
 }
 .middle {
   flex: 1;
