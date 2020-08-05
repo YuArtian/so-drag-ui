@@ -1,7 +1,10 @@
-import React, { useEffect, useState, DragEvent, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Sortable from 'sortablejs';
-import styles from './index.css';
+import Typography from '@material-ui/core/Typography';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
 import Components from '../../data/components.json';
+import styles from './index.css';
 
 interface Component {
   name: string;
@@ -15,6 +18,7 @@ export default function ComponentMenu(): JSX.Element {
   const [components, setComponents] = useState<{
     [_: string]: Component;
   }>({});
+  /* 初始化拖拽 */
   useEffect(() => {
     Sortable.create(dragRef.current, {
       group: {
@@ -31,12 +35,6 @@ export default function ComponentMenu(): JSX.Element {
     const list = JSON.parse(JSON.stringify(Components));
     setComponents(list);
   }, []);
-  // draggable
-  // onDragStart={(event) => handleDragStart(event, value)}
-  // const handleDragStart = (event: DragEvent, componentData: Component) => {
-  //   console.log('event', event);
-  //   event.dataTransfer?.setData('component', JSON.stringify(componentData));
-  // };
 
   const renderComponentsList = () => {
     return Object.entries(components).map(([key, value]) => {
@@ -54,9 +52,12 @@ export default function ComponentMenu(): JSX.Element {
     });
   };
   return (
-    <div>
-      <h2>组件面板</h2>
-      <ul ref={dragRef}>{renderComponentsList()}</ul>
-    </div>
+    <>
+      <CssBaseline />
+      <Container>
+        <Typography>组件面板</Typography>
+        <ul ref={dragRef}>{renderComponentsList()}</ul>
+      </Container>
+    </>
   );
 }

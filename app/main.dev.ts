@@ -17,8 +17,6 @@ import log from 'electron-log';
 import fs from 'fs';
 import MenuBuilder from './menu';
 
-const httpServer = require('http-server');
-
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';

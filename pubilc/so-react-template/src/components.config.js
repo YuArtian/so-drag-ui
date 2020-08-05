@@ -1,1 +1,1 @@
-export default [{"id":1596610866616,"name":"SoGap","data":{"backgroundColor":"#FFFF00","textColor":"#000000","text":"╮(＾ᴗ＾)╭","height":40}},{"id":1596610876957,"name":"SoHeader","data":{"title":"页面可视化搭建框架","src":"xxxx","link":"xxxxx"}},{"id":1596610883701,"name":"SoGap","data":{"backgroundColor":"#FFFF00","textColor":"#000000","text":"╮(＾ᴗ＾)╭","height":40}}]
+export default [{"id":1596625232804,"name":"SoGap","data":{"backgroundColor":"#FFFF00","textColor":"#000000","text":"╮(＾ᴗ＾)╭","height":40}}]
