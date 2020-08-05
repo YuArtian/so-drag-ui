@@ -1,0 +1,30 @@
+{
+  "SoGap": {
+    "backgroundColor": "#FFFF00",
+    "textColor": "#000000",
+    "text": "╮(＾ᴗ＾)╭",
+    "height": 40
+  },
+  "SoHeader": {
+    "title": "页面可视化搭建框架",
+    "src": "xxxx",
+    "link": "xxxxx"
+  },
+  "SoInfo": {
+    "title": "框架特性",
+    "infoList": [
+      {
+        "info": "可视化页面搭建框架"
+      },
+      {
+        "info": "支持自由拓展页面组件"
+      },
+      {
+        "info": "自定义页面可配置字段"
+      },
+      {
+        "info": "模板工程/编辑器/后台服务解偶"
+      }
+    ]
+  }
+}

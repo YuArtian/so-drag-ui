@@ -11,9 +11,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import MenuBuilder from './menu';
 
 const httpServer = require('http-server');
@@ -51,7 +52,9 @@ const installExtensions = async () => {
 };
 
 // 启动 node 服务
-httpServer.createServer({ root: '../pubilc/so-react-template' }).listen(8080);
+// httpServer
+//   .createServer({ root: '../pubilc/so-react-template/index.html' })
+//   .listen(8080);
 
 const createWindow = async () => {
   if (
@@ -130,4 +133,60 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
+});
+
+ipcMain.on('message', (event, arg) => {
+  console.log('ipcMain message arg', arg);
+  // event.sender.send('reply', 'pong');
+  const componentsConfigString = `export default ${JSON.stringify(arg)}`;
+  // 修改配置文件的方法
+  fs.writeFile(
+    path.resolve(
+      __dirname,
+      '../pubilc/so-react-template/src/components.config.js'
+    ),
+    componentsConfigString,
+    'utf8',
+    (error) => {
+      if (error) {
+        console.log('ERROR', error);
+      }
+    }
+  );
+  /*
+    // 修改注入注释的方法
+    const importString = Array.from(arg)
+      .map((component) => {
+        console.log('import compoent', component);
+
+        return `import ${component.name} from './components/${component.name}/index.js';\r\n`;
+      })
+      .join('');
+    const componentString = Array.from(arg)
+      .map((component) => {
+        return `<${component.name} dataSource={${JSON.stringify(
+          component.data
+        )}} />`;
+      })
+      .join('');
+    const data = fs.readFileSync(
+      path.resolve(__dirname, '../pubilc/so-react-template/src/App.js')
+    );
+    let AppStr = data.toString();
+    AppStr = AppStr.replace(/\/\/so-imports/, importString).replace(
+      /{\/\* so-components- \*\/}/,
+      componentString
+    );
+    // AppStr = AppStr
+    console.log('AppStr', AppStr);
+    fs.writeFile(
+      path.resolve(__dirname, '../pubilc/so-react-template/src/App.js'),
+      AppStr,
+      'utf8',
+      (err) => {
+        if (err) throw err;
+        console.log('success done');
+      }
+    );
+  */
 });

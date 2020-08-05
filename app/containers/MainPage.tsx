@@ -1,19 +1,21 @@
 import React from 'react';
 // import WebView from 'react-electron-web-view';
 import styles from './MainPage.css';
-import ComponentMenu from '../components/ComponentMenu/index';
+import ComponentsPanel from '../components/ComponentsPanel/index';
+import SelectedComponentsPanel from '../components/SelectedComponentsPanel/index';
 
 export default function MainPage() {
-
   return (
     <div className={styles.main}>
       <div className={styles.components}>
-        <ComponentMenu />
+        <ComponentsPanel />
       </div>
-      <div className={styles.list}>list</div>
+      <div className={styles.list}>
+        <SelectedComponentsPanel />
+      </div>
       <div className={styles.middle}>
         <webview
-          src="http://172.29.23.141:8080"
+          src="http://172.29.23.141:3000"
           style={{ display: 'flex', height: '100%' }}
         />
       </div>
