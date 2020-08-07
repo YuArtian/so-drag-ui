@@ -11,12 +11,13 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import fs from 'fs';
 import MenuBuilder from './menu';
+import { subReplaceSelectedList, initPreviewTemplate } from './service/ipc';
 
+/* 更新器 */
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -24,21 +25,21 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
-
+/* 主窗口 */
 let mainWindow: BrowserWindow | null = null;
-
+/* 生产环境 source map设置 */
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
-
+/* 开发环境 debug模式 */
 if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
   require('electron-debug')();
 }
-
+/* 开发环境 开发工具设置 */
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -48,24 +49,25 @@ const installExtensions = async () => {
     extensions.map((name) => installer.default(installer[name], forceDownload))
   ).catch(console.log);
 };
-
-// 启动 node 服务
-// httpServer
-//   .createServer({ root: '../pubilc/so-react-template/index.html' })
-//   .listen(8080);
-
+/* 创建窗口 -设置主窗口 -设置菜单 */
 const createWindow = async () => {
+  // 安装开发工具
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
     await installExtensions();
   }
-
+  // 初始化模板配置文件
+  await initPreviewTemplate();
+  // 启动预览窗口 -webview加载Node服务
+  // 创建主窗口
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    // width: 1024,
+    // height: 728,
+    // 默进入认全屏
+    fullscreen: true,
     webPreferences:
       (process.env.NODE_ENV === 'development' ||
         process.env.E2E_BUILD === 'true') &&
@@ -81,9 +83,7 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  // 主窗口加载完成
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -95,23 +95,22 @@ const createWindow = async () => {
       mainWindow.focus();
     }
   });
-
+  // 主窗口关闭
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
+  // 创建菜单
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  // Remove this if your app does not use auto updates
+  // 自动更新
   // eslint-disable-next-line
   new AppUpdater();
 };
 
-/**
- * Add event listeners...
- */
-
+/* 主进程事件 */
+// 监听已选组件列表更新
+subReplaceSelectedList();
+/* 应用事件 */
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
@@ -131,60 +130,4 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
-});
-
-ipcMain.on('message', (event, arg) => {
-  console.log('ipcMain message arg', arg);
-  // event.sender.send('reply', 'pong');
-  const componentsConfigString = `export default ${JSON.stringify(arg)}`;
-  // 修改配置文件的方法
-  fs.writeFile(
-    path.resolve(
-      __dirname,
-      '../pubilc/so-react-template/src/components.config.js'
-    ),
-    componentsConfigString,
-    'utf8',
-    (error) => {
-      if (error) {
-        console.log('ERROR', error);
-      }
-    }
-  );
-  /*
-    // 修改注入注释的方法
-    const importString = Array.from(arg)
-      .map((component) => {
-        console.log('import compoent', component);
-
-        return `import ${component.name} from './components/${component.name}/index.js';\r\n`;
-      })
-      .join('');
-    const componentString = Array.from(arg)
-      .map((component) => {
-        return `<${component.name} dataSource={${JSON.stringify(
-          component.data
-        )}} />`;
-      })
-      .join('');
-    const data = fs.readFileSync(
-      path.resolve(__dirname, '../pubilc/so-react-template/src/App.js')
-    );
-    let AppStr = data.toString();
-    AppStr = AppStr.replace(/\/\/so-imports/, importString).replace(
-      /{\/\* so-components- \*\/}/,
-      componentString
-    );
-    // AppStr = AppStr
-    console.log('AppStr', AppStr);
-    fs.writeFile(
-      path.resolve(__dirname, '../pubilc/so-react-template/src/App.js'),
-      AppStr,
-      'utf8',
-      (err) => {
-        if (err) throw err;
-        console.log('success done');
-      }
-    );
-  */
 });

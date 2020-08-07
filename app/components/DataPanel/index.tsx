@@ -7,8 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
+import { useDispatch, useSelector } from 'react-redux';
 import BaseForm from './BaseForm';
 import ComponentForm from './ComponentForm/index';
+import { changeTabTo, currentTab } from '../../reducers/dataTab';
 
 interface TabPanelProps {
   children: React.ReactNode;
@@ -17,6 +19,7 @@ interface TabPanelProps {
 }
 
 function TabPanel(props: TabPanelProps) {
+  console.log('DataPanel TabPanel render');
   const { children, value, index } = props;
 
   return (
@@ -36,13 +39,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function DataPanel(): JSX.Element {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-
+  const value = useSelector(currentTab);
+  const dispatch = useDispatch();
   const handleChange = (
     event: React.ChangeEvent<unknown>,
     newValue: number
   ) => {
-    setValue(newValue);
+    dispatch(changeTabTo(newValue));
   };
 
   return (

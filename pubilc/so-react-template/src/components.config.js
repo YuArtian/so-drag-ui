@@ -1,1 +1,1 @@
-export default [{"id":1596625232804,"name":"SoGap","data":{"backgroundColor":"#FFFF00","textColor":"#000000","text":"╮(＾ᴗ＾)╭","height":40}}]
+export default []

@@ -15,9 +15,12 @@ function App() {
     <div className="App">
       <Suspense fallback={<div>Loading...</div>}>
         {
+          !components.length && <div className="blank">还没有任何组件哦</div>
+        }
+        {
           components.map(one => {
             const OneComponent = obj[one.name]
-            return <OneComponent key={one.id} />
+            return <OneComponent key={one.id} dataSource={one.data} />
           })
         }
       </Suspense>

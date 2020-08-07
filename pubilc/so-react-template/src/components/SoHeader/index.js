@@ -1,11 +1,7 @@
 import React from 'react';
 import './index.css';
-import { title } from 'process';
 
-export default function Header({
-  dataSource = {
-    title: 'So Drag UI',
-  },
-} = {}) {
+export default function Header({ dataSource: { title } }) {
+
   return <div className="so-header">{title}</div>;
 }
