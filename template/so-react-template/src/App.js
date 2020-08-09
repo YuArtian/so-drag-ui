@@ -1,9 +1,10 @@
 import React, { Suspense } from 'react';
 import './App.css';
 import components from './components.config';
-
+console.log('components', components)
 const obj = {}
 components.map(component => {
+  console.log('components!!!!!!!', component)
   const name = component.name
   if (obj[name]) return
   obj[name] = React.lazy(() => import(`./components/${name}`));

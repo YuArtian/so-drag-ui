@@ -1,1 +1,1 @@
-export default [{"id":1596961688374,"name":"SoHeader","data":{"title":"页面可视化搭建框架","src":"xxxx","link":"xxxxx"},"index":0}]
+export default [{"id":1596963745026,"name":"SoHeader","data":{"title":"页面可视化搭建框架","src":"xxxx","link":"xxxxx"},"index":0},{"id":1596963747677,"name":"SoHeader","data":{"title":"页面可视化搭建框架","src":"xxxx","link":"xxxxx"},"index":1}]
