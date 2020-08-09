@@ -1,19 +1,23 @@
 import { ipcMain, ipcRenderer } from 'electron';
-import { promises as fs } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import { networkInterfaces } from 'os';
+import util from 'util';
+import child_process from 'child_process';
 // import events from 'events';
 import { REPLACE_LIST } from '../constants/ipc';
+
+const exec = util.promisify(child_process.exec);
 
 // const ipcEventEmitter = new events.EventEmitter();
 
 /* 修改模板配置文件 */
 const editPreviewTemplate = async (temp: string) => {
   try {
-    await fs.writeFile(
+    await fs.promises.writeFile(
       path.resolve(
         __dirname,
-        '../../pubilc/so-react-template/src/components.config.js'
+        '../../template/so-react-template/src/components.config.js'
       ),
       temp,
       'utf8'
@@ -22,10 +26,12 @@ const editPreviewTemplate = async (temp: string) => {
     console.log('<==== ERROR::replaceSelectedList ====>', error);
   }
 };
-/* 初始化模板配置文件 */
-export const initPreviewTemplate = async () => {
+
+/* 初始化预览模板配置文件 */
+export const initPreviewTemplateConfig = async () => {
   await editPreviewTemplate('export default []');
 };
+
 /* 设置监听 -更新已选组件列表 */
 export const subReplaceSelectedList = () => {
   ipcMain.on(REPLACE_LIST, (event, arg) => {
@@ -39,7 +45,6 @@ export const subReplaceSelectedList = () => {
 export const emitReplaceSelectedList = (newList) => {
   ipcRenderer.send(REPLACE_LIST, newList);
 };
-
 /* 获取本机ip地址 */
 export const getIP = () => {
   const interfaces = networkInterfaces(); // 在开发环境中获取局域网中的本机iP地址

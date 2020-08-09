@@ -15,7 +15,10 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { subReplaceSelectedList, initPreviewTemplate } from './service/ipc';
+import {
+  subReplaceSelectedList,
+  initPreviewTemplateConfig,
+} from './service/ipc';
 
 /* 更新器 */
 export default class AppUpdater {
@@ -51,60 +54,63 @@ const installExtensions = async () => {
 };
 /* 创建窗口 -设置主窗口 -设置菜单 */
 const createWindow = async () => {
-  // 安装开发工具
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
+  try {
+    // 安装开发工具
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.DEBUG_PROD === 'true'
+    ) {
+      await installExtensions();
+    }
+    // 初始化模板配置文件
+    await initPreviewTemplateConfig();
+    // 创建主窗口
+    mainWindow = new BrowserWindow({
+      show: false,
+      // width: 1024,
+      // height: 728,
+      // 默进入认全屏
+      fullscreen: true,
+      webPreferences:
+        (process.env.NODE_ENV === 'development' ||
+          process.env.E2E_BUILD === 'true') &&
+        process.env.ERB_SECURE !== 'true'
+          ? {
+              nodeIntegration: true,
+              webviewTag: true,
+            }
+          : {
+              preload: path.join(__dirname, 'dist/renderer.prod.js'),
+              webviewTag: true,
+            },
+    });
+    // 主窗口加载
+    mainWindow.loadURL(`file://${__dirname}/app.html`);
+    // 主窗口加载完成
+    mainWindow.webContents.on('did-finish-load', () => {
+      if (!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      if (process.env.START_MINIMIZED) {
+        mainWindow.minimize();
+      } else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    });
+    // 主窗口关闭
+    mainWindow.on('closed', () => {
+      mainWindow = null;
+    });
+    // 创建菜单
+    const menuBuilder = new MenuBuilder(mainWindow);
+    menuBuilder.buildMenu();
+    // 自动更新
+    // eslint-disable-next-line
+    new AppUpdater();
+  } catch (error) {
+    console.log('ERROR::主窗口创建失败(createWindow)', error);
   }
-  // 初始化模板配置文件
-  await initPreviewTemplate();
-  // 启动预览窗口 -webview加载Node服务
-  // 创建主窗口
-  mainWindow = new BrowserWindow({
-    show: false,
-    // width: 1024,
-    // height: 728,
-    // 默进入认全屏
-    fullscreen: true,
-    webPreferences:
-      (process.env.NODE_ENV === 'development' ||
-        process.env.E2E_BUILD === 'true') &&
-      process.env.ERB_SECURE !== 'true'
-        ? {
-            nodeIntegration: true,
-            webviewTag: true,
-          }
-        : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js'),
-            webviewTag: true,
-          },
-  });
-
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
-  // 主窗口加载完成
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
-    }
-  });
-  // 主窗口关闭
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-  // 创建菜单
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-  // 自动更新
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
 /* 主进程事件 */
