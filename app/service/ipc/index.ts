@@ -45,6 +45,7 @@ export const subReplaceSelectedList = () => {
 export const emitReplaceSelectedList = (newList) => {
   ipcRenderer.send(REPLACE_LIST, newList);
 };
+
 /* 获取本机ip地址 */
 export const getIP = () => {
   const interfaces = networkInterfaces(); // 在开发环境中获取局域网中的本机iP地址
